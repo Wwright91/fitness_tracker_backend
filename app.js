@@ -1,0 +1,10 @@
+const express = require("express");
+
+const app = express();
+
+// HEALTH CHECK ROUTE
+app.get("/", (req, res) => {
+  res.send("Welcome to my fitness app!")
+})
+
+module.exports = app;
