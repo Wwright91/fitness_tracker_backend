@@ -27,6 +27,7 @@ router.post("/", (req, res) => {
   res.status(201).send(workoutArray[workoutArray.length - 1])
 })
 
+// DELETE A WORKOUT BY SPECIFIED ID
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
   const workoutToDeleteIndex = workoutArray.findIndex(workout => workout.id === +id)
@@ -34,6 +35,19 @@ router.delete("/:id", (req, res) => {
   if (workoutToDeleteIndex !== -1) {
     workoutArray.splice(workoutToDeleteIndex, 1)
     res.redirect("/workouts")
+  } else {
+    res.status(404).send({error: `Workout with id: ${id} not found!`})
+  }
+})
+
+// UPDATE A WORKOUT BY SPECIFIED ID
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const workoutToUpdateIndex = workoutArray.findIndex(workout => workout.id === +id)
+
+  if (workoutToUpdateIndex !== -1) {
+    workoutArray[workoutToUpdateIndex] = req.body
+    res.status(200).json(workoutArray[workoutToUpdateIndex])
   } else {
     res.status(404).send({error: `Workout with id: ${id} not found!`})
   }
