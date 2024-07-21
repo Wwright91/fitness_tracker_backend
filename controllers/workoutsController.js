@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { getAllWorkouts, getOneWorkout } = require("../queries/workout");
+const {
+  getAllWorkouts,
+  getOneWorkout,
+  createWorkout,
+  deleteWorkout,
+} = require("../queries/workout");
 
 // GET ALL WORKOUTS
 router.get("/", async (req, res) => {
@@ -16,7 +21,7 @@ router.get("/", async (req, res) => {
 // GET A SINGLE WORKOUT
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const workout = await getOneWorkout(id)
+  const workout = await getOneWorkout(id);
   if (workout) {
     res.status(200).send(workout);
   } else {
@@ -25,24 +30,22 @@ router.get("/:id", async (req, res) => {
 });
 
 // CREATE A NEW WORKOUT
-router.post("/", (req, res) => {
-  const currentWorkout = { id: workoutArray.length + 1, ...req.body };
-  workoutArray.push(currentWorkout);
-
-  // res.status(201).send(currentWorkout) ||
-  res.status(201).send(workoutArray[workoutArray.length - 1]);
+router.post("/", async (req, res) => {
+  try {
+    const currentWorkout = await createWorkout(req.body);
+    res.status(201).send(currentWorkout);
+  } catch (error) {
+    res.status(400).json({ error: "Bad Request" });
+  }
 });
 
 // DELETE A WORKOUT BY SPECIFIED ID
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  const workoutToDeleteIndex = workoutArray.findIndex(
-    (workout) => workout.id === +id
-  );
+  const workoutToDelete = await deleteWorkout(id);
 
-  if (workoutToDeleteIndex !== -1) {
-    workoutArray.splice(workoutToDeleteIndex, 1);
-    res.redirect("/workouts");
+  if (workoutToDelete) {
+    res.status(200).json(workoutToDelete);
   } else {
     res.status(404).send({ error: `Workout with id: ${id} not found!` });
   }
