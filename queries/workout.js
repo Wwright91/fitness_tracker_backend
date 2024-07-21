@@ -43,4 +43,23 @@ const deleteWorkout = async (id) => {
   }
 };
 
-module.exports = { getAllWorkouts, getOneWorkout, createWorkout, deleteWorkout };
+const updateWorkout = async (id, workout) => {
+  const { type, durationInMinutes, caloriesBurned, date } = workout;
+  try {
+    const updatedWorkout = await db.one(
+      "UPDATE workouts SET type = $1, durationInMinutes = $2, caloriesBurned = $3, date = $4 WHERE id = $5 RETURNING *",
+      [type, durationInMinutes, caloriesBurned, date, id]
+    );
+    return updatedWorkout;
+  } catch (error) {
+    return error;
+  }
+};
+
+module.exports = {
+  getAllWorkouts,
+  getOneWorkout,
+  createWorkout,
+  deleteWorkout,
+  updateWorkout
+};

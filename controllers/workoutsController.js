@@ -6,6 +6,7 @@ const {
   getOneWorkout,
   createWorkout,
   deleteWorkout,
+  updateWorkout,
 } = require("../queries/workout");
 
 // GET ALL WORKOUTS
@@ -47,22 +48,18 @@ router.delete("/:id", async (req, res) => {
   if (workoutToDelete) {
     res.status(200).json(workoutToDelete);
   } else {
-    res.status(404).send({ error: `Workout with id: ${id} not found!` });
+    res.status(404).json({ error: `Workout with id: ${id} not found!` });
   }
 });
 
 // UPDATE A WORKOUT BY SPECIFIED ID
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const workoutToUpdateIndex = workoutArray.findIndex(
-    (workout) => workout.id === +id
-  );
-
-  if (workoutToUpdateIndex !== -1) {
-    workoutArray[workoutToUpdateIndex] = req.body;
-    res.status(200).json(workoutArray[workoutToUpdateIndex]);
-  } else {
-    res.status(404).send({ error: `Workout with id: ${id} not found!` });
+  try {
+    const workoutToUpdate = await updateWorkout(id, req.body);
+    res.status(200).json(workoutToUpdate);
+  } catch (error) {
+    res.status(404).json({ error: `Workout with id: ${id} not found!` });
   }
 });
 
