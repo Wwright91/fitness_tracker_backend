@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { getAllWorkouts } = require("../queries/workout");
+const { getAllWorkouts, getOneWorkout } = require("../queries/workout");
 
 // GET ALL WORKOUTS
 router.get("/", async (req, res) => {
@@ -14,9 +14,9 @@ router.get("/", async (req, res) => {
 });
 
 // GET A SINGLE WORKOUT
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const workout = workoutArray.find((el) => el.id === +id);
+  const workout = await getOneWorkout(id)
   if (workout) {
     res.status(200).send(workout);
   } else {

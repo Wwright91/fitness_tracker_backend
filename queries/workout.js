@@ -9,4 +9,13 @@ const getAllWorkouts = async () => {
   }
 };
 
-module.exports = { getAllWorkouts };
+const getOneWorkout = async (id) => {
+  try {
+    const oneWorkout = await db.one("SELECT * FROM workouts WHERE id = $1", id);
+    return oneWorkout;
+  } catch (error) {
+    return error;
+  }
+};
+
+module.exports = { getAllWorkouts, getOneWorkout };
